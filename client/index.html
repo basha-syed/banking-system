@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Digital Bank - Full Stack Management System</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+
+  <!-- Chart.js & jsPDF CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+  <!-- Toast Notification Stack Container -->
+  <div id="toast-container"></div>
+
+  <!-- ============================================================
+       1. AUTHENTICATION SECTION (Public Views)
+       ============================================================ -->
+  <div id="auth-section" class="auth-wrapper" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="auth-brand-logo"><i class="fas fa-university"></i></div>
+        <h2 class="auth-title">Apex Digital Bank</h2>
+        <p class="auth-subtitle">Secure Next-Gen Financial Portal</p>
+      </div>
+
+      <!-- Login View -->
+      <div id="view-login">
+        <form id="form-login">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="login-email" class="form-control" placeholder="john@example.com" required value="john@example.com">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="login-password" class="form-control" placeholder="••••••••" required value="Password@123">
+            </div>
+          </div>
+          <button type="submit" id="login-submit-btn" class="btn btn-primary btn-block">Sign In</button>
+        </form>
+
+        <div style="margin-top: 1.25rem; text-align: center; font-size: 0.85rem;">
+          <p>Don't have an account? <a href="#register">Create Account</a></p>
+          <p style="margin-top: 0.4rem;"><a href="#forgot-password" class="text-muted">Forgot Password?</a></p>
+          <div style="margin-top: 1rem; padding: 0.75rem; background: var(--bg-main); border-radius: var(--radius-sm); font-size: 0.75rem; text-align: left;">
+            <strong>Demo Credentials:</strong><br>
+            User: <code>john@example.com</code> / <code>Password@123</code><br>
+            Admin: <code>admin@bank.com</code> / <code>Password@123</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Register View -->
+      <div id="view-register" style="display: none;">
+        <form id="form-register">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-user"></i>
+              <input type="text" id="reg-fullname" class="form-control" placeholder="John Doe" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="reg-email" class="form-control" placeholder="name@example.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-phone"></i>
+              <input type="tel" id="reg-phone" class="form-control" placeholder="+1 555 019 2834" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="reg-password" class="form-control" placeholder="••••••••" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Account Type</label>
+            <select id="reg-account-type" class="form-control">
+              <option value="savings">Savings Account</option>
+              <option value="checking">Checking Account</option>
+            </select>
+          </div>
+          <button type="submit" id="register-submit-btn" class="btn btn-primary btn-block">Create Account</button>
+        </form>
+        <div style="margin-top: 1.25rem; text-align: center; font-size: 0.85rem;">
+          Already have an account? <a href="#login">Sign In</a>
+        </div>
+      </div>
+
+      <!-- Forgot Password View -->
+      <div id="view-forgot-password" style="display: none;">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          Enter your email address to generate a reset OTP code.
+        </p>
+        <form id="form-forgot-pass">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="forgot-email" class="form-control" placeholder="name@example.com" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Request OTP</button>
+        </form>
+        <div style="margin-top: 1.25rem; text-align: center; font-size: 0.85rem;">
+          Remembered password? <a href="#login">Back to Sign In</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================
+       2. REGISTRATION OTP VERIFICATION MODAL
+       ============================================================ -->
+  <div id="otp-modal" class="modal-overlay">
+    <div class="modal-card">
+      <h3 style="margin-bottom: 0.5rem;"><i class="fas fa-shield-alt text-primary"></i> OTP Security Verification</h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+        Enter the 6-digit OTP code to complete your registration.
+      </p>
+      
+      <div style="padding: 0.75rem; background: var(--bg-main); border-radius: var(--radius-sm); text-align: center; margin-bottom: 1rem; border: 1px dashed var(--primary-500);">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Demo OTP Code:</span>
+        <strong id="otp-demo-code" style="font-size: 1.25rem; letter-spacing: 2px; color: var(--primary-600); display: block;">123456</strong>
+      </div>
+
+      <form id="form-verify-otp">
+        <div class="form-group">
+          <input type="text" id="otp-input-code" class="form-control" placeholder="Enter 6-digit OTP" maxlength="6" style="text-align: center; font-size: 1.25rem; letter-spacing: 4px;" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Verify & Activate Account</button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       3. MAIN APPLICATION SHELL (Protected Views)
+       ============================================================ -->
+  <div id="app-shell" style="display: none;">
+
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand-header">
+          <div class="brand-icon"><i class="fas fa-university"></i></div>
+          <div class="brand-name">Apex Bank</div>
+        </div>
+
+        <ul class="nav-list">
+          <li class="nav-item active" data-view="dashboard">
+            <a href="#dashboard"><i class="fas fa-chart-pie"></i> Dashboard</a>
+          </li>
+          <li class="nav-item" data-view="deposit">
+            <a href="#deposit"><i class="fas fa-arrow-down"></i> Deposit Money</a>
+          </li>
+          <li class="nav-item" data-view="withdraw">
+            <a href="#withdraw"><i class="fas fa-arrow-up"></i> Withdraw</a>
+          </li>
+          <li class="nav-item" data-view="transfer">
+            <a href="#transfer"><i class="fas fa-paper-plane"></i> Transfer Money</a>
+          </li>
+          <li class="nav-item" data-view="transactions">
+            <a href="#transactions"><i class="fas fa-receipt"></i> Transactions</a>
+          </li>
+          <li class="nav-item" data-view="profile">
+            <a href="#profile"><i class="fas fa-user-cog"></i> Profile & Security</a>
+          </li>
+          <li class="nav-item" id="nav-item-admin" data-view="admin" style="display: none;">
+            <a href="#admin" style="color: var(--accent-rose);"><i class="fas fa-user-shield"></i> Admin Panel</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-info-brief">
+          <div class="avatar"><i class="fas fa-user"></i></div>
+          <div>
+            <div class="user-name user-name-display">User</div>
+            <div class="user-role user-role-display">Member</div>
+          </div>
+        </div>
+        <button onclick="Auth.logout()" class="btn btn-secondary" style="padding: 0.4rem 0.6rem; font-size: 0.8rem;" title="Sign Out">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Right Main Layout Wrapper -->
+    <div class="main-wrapper">
+
+      <!-- Top Header Navigation -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="sidebar-toggle-btn"><i class="fas fa-bars"></i></button>
+          <div class="page-title">Digital Banking Dashboard</div>
+        </div>
+        <div class="header-actions">
+          <button class="theme-toggle-btn" onclick="UI.toggleTheme()" title="Toggle Dark/Light Mode">
+            <i class="fas fa-moon"></i>
+          </button>
+          <div class="notification-btn" onclick="window.location.hash='profile'" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="badge-dot"></span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dynamic Page Container -->
+      <main class="page-container">
+
+        <!-- A. DASHBOARD VIEW -->
+        <div id="page-dashboard" class="page-view">
+          <div class="dashboard-grid">
+            
+            <!-- Left Balance Card & Quick Actions -->
+            <div>
+              <div class="bank-card">
+                <div class="card-top">
+                  <div class="card-brand">APEX BANK</div>
+                  <div class="card-chip"></div>
+                </div>
+                <div>
+                  <div class="card-balance-label" id="dash-card-type">SAVINGS ACCOUNT</div>
+                  <div class="card-balance-amount" id="dash-balance-amount">$0.00</div>
+                </div>
+                <div class="card-bottom">
+                  <div class="card-number" id="dash-card-number">•••• •••• ••••</div>
+                  <div class="card-holder user-name-display" id="dash-card-holder">JOHN DOE</div>
+                </div>
+              </div>
+
+              <!-- Quick Action Shortcuts -->
+              <div class="quick-actions-grid">
+                <div class="action-card action-deposit" onclick="window.location.hash='deposit'">
+                  <div class="action-icon"><i class="fas fa-plus-circle"></i></div>
+                  <div class="action-title">Deposit</div>
+                </div>
+                <div class="action-card action-withdraw" onclick="window.location.hash='withdraw'">
+                  <div class="action-icon"><i class="fas fa-minus-circle"></i></div>
+                  <div class="action-title">Withdraw</div>
+                </div>
+                <div class="action-card action-transfer" onclick="window.location.hash='transfer'">
+                  <div class="action-icon"><i class="fas fa-exchange-alt"></i></div>
+                  <div class="action-title">Transfer</div>
+                </div>
+                <div class="action-card action-statement" onclick="Transactions.downloadPDFStatement()">
+                  <div class="action-icon"><i class="fas fa-file-pdf"></i></div>
+                  <div class="action-title">Statement</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Visual Analytics Chart -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-chart-line text-primary"></i> Monthly Cash Flow</h3>
+              </div>
+              <div style="height: 200px; position: relative;">
+                <canvas id="analytics-chart"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Recent Activity Feed -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-clock text-primary"></i> Recent Transactions</h3>
+              <a href="#transactions" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">View All</a>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>TXN ID</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-recent-table">
+                  <tr><td colspan="5" class="text-center">Loading transactions...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- B. DEPOSIT MONEY VIEW -->
+        <div id="page-deposit" class="page-view" style="display: none;">
+          <div class="card" style="max-width: 540px; margin: 0 auto;">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-arrow-down text-success"></i> Deposit Funds</h3>
+            </div>
+            <form id="form-deposit">
+              <div class="form-group">
+                <label class="form-label">Deposit Amount ($)</label>
+                <div class="input-icon-wrapper">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input type="number" id="deposit-amount" class="form-control" placeholder="100.00" step="0.01" min="1" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description / Reference</label>
+                <input type="text" id="deposit-desc" class="form-control" placeholder="e.g. Salary Deposit, Cash Deposit">
+              </div>
+              <button type="submit" class="btn btn-success btn-block"><i class="fas fa-check-circle"></i> Confirm Deposit</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- C. WITHDRAW MONEY VIEW -->
+        <div id="page-withdraw" class="page-view" style="display: none;">
+          <div class="card" style="max-width: 540px; margin: 0 auto;">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-arrow-up text-danger"></i> Withdraw Funds</h3>
+            </div>
+            <form id="form-withdraw">
+              <div class="form-group">
+                <label class="form-label">Withdrawal Amount ($)</label>
+                <div class="input-icon-wrapper">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input type="number" id="withdraw-amount" class="form-control" placeholder="50.00" step="0.01" min="1" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <input type="text" id="withdraw-desc" class="form-control" placeholder="e.g. ATM Cash Withdrawal">
+              </div>
+              <button type="submit" class="btn btn-danger btn-block"><i class="fas fa-check-circle"></i> Confirm Withdrawal</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- D. MONEY TRANSFER VIEW -->
+        <div id="page-transfer" class="page-view" style="display: none;">
+          <div class="card" style="max-width: 580px; margin: 0 auto;">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-paper-plane text-primary"></i> Send Money Transfer</h3>
+            </div>
+            <form id="form-transfer">
+              <div class="form-group">
+                <label class="form-label">Recipient Account Number</label>
+                <div class="input-icon-wrapper">
+                  <i class="fas fa-credit-card"></i>
+                  <input type="text" id="transfer-acc-number" class="form-control" placeholder="e.g. 1000958312" required>
+                </div>
+                <div id="beneficiary-name-display" style="font-size: 0.85rem; margin-top: 0.35rem; font-weight: 600;"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Transfer Amount ($)</label>
+                <div class="input-icon-wrapper">
+                  <i class="fas fa-dollar-sign"></i>
+                  <input type="number" id="transfer-amount" class="form-control" placeholder="250.00" step="0.01" min="1" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Transfer Note / Description</label>
+                <input type="text" id="transfer-desc" class="form-control" placeholder="e.g. Rent Payment, Dinner Split">
+              </div>
+
+              <!-- Security OTP Section -->
+              <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <label class="form-label" style="margin-bottom: 0;">Transfer Security OTP (Optional)</label>
+                  <button type="button" id="btn-request-transfer-otp" class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                    Generate OTP
+                  </button>
+                </div>
+                <input type="text" id="transfer-otp-code" class="form-control" placeholder="6-digit security OTP code">
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;"><i class="fas fa-shield-alt"></i> Execute Transfer</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- E. TRANSACTION HISTORY & PDF STATEMENT VIEW -->
+        <div id="page-transactions" class="page-view" style="display: none;">
+          <!-- Filter Controls Bar -->
+          <div class="filter-bar">
+            <div class="filter-group">
+              <input type="text" id="tx-search-input" class="form-control" placeholder="Search TXN ID or note..." style="width: 220px;" oninput="Transactions.fetchHistory(1)">
+              <select id="tx-type-select" class="form-control" style="width: 140px;" onchange="Transactions.fetchHistory(1)">
+                <option value="">All Types</option>
+                <option value="deposit">Deposit</option>
+                <option value="withdraw">Withdraw</option>
+                <option value="transfer">Transfer</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <input type="date" id="tx-start-date" class="form-control" style="width: 150px;" onchange="Transactions.fetchHistory(1)">
+              <input type="date" id="tx-end-date" class="form-control" style="width: 150px;" onchange="Transactions.fetchHistory(1)">
+              <button onclick="Transactions.downloadPDFStatement()" class="btn btn-primary">
+                <i class="fas fa-file-pdf"></i> Download PDF
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>TXN ID</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Party</th>
+                    <th>Timestamp</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="tx-history-table">
+                  <tr><td colspan="6" class="text-center">Loading transactions...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Row -->
+            <div id="tx-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-color);"></div>
+          </div>
+        </div>
+
+        <!-- F. PROFILE & SECURITY VIEW -->
+        <div id="page-profile" class="page-view" style="display: none;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Profile Info Form -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-user-edit text-primary"></i> Edit Profile Information</h3>
+              </div>
+              <form id="form-profile">
+                <div class="form-group">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" id="prof-fullname" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Email Address (Read Only)</label>
+                  <input type="email" id="prof-email" class="form-control" disabled style="opacity: 0.7;">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Phone Number</label>
+                  <input type="text" id="prof-phone" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Save Profile Changes</button>
+              </form>
+            </div>
+
+            <!-- Change Password Form -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-key text-primary"></i> Security & Password</h3>
+              </div>
+              <form id="form-password">
+                <div class="form-group">
+                  <label class="form-label">Current Password</label>
+                  <input type="password" id="pass-current" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">New Password</label>
+                  <input type="password" id="pass-new" class="form-control" placeholder="Min 6 characters" required>
+                </div>
+                <button type="submit" class="btn btn-secondary btn-block">Update Password</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- G. ADMIN DASHBOARD VIEW -->
+        <div id="page-admin" class="page-view" style="display: none;">
+          <!-- Admin KPI Widgets -->
+          <div class="admin-stats-grid">
+            <div class="stat-card stat-users">
+              <div class="stat-icon"><i class="fas fa-users"></i></div>
+              <div>
+                <div class="stat-value" id="admin-stat-users">0</div>
+                <div class="stat-label">Total Users</div>
+              </div>
+            </div>
+            <div class="stat-card stat-deposits">
+              <div class="stat-icon"><i class="fas fa-vault"></i></div>
+              <div>
+                <div class="stat-value" id="admin-stat-deposits">$0.00</div>
+                <div class="stat-label">Total Bank Balance</div>
+              </div>
+            </div>
+            <div class="stat-card stat-volume">
+              <div class="stat-icon"><i class="fas fa-chart-bar"></i></div>
+              <div>
+                <div class="stat-value" id="admin-stat-txcount">0</div>
+                <div class="stat-label">Completed TXNs</div>
+              </div>
+            </div>
+            <div class="stat-card stat-volume">
+              <div class="stat-icon"><i class="fas fa-exchange-alt"></i></div>
+              <div>
+                <div class="stat-value" id="admin-stat-volume">$0.00</div>
+                <div class="stat-label">Total Volume</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Management Table -->
+          <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-users-cog text-primary"></i> Account Management</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Customer Name</th>
+                    <th>Account Number</th>
+                    <th>Balance</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-table">
+                  <tr><td colspan="7" class="text-center">Loading users...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- System Transactions Monitoring Feed -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-list-alt text-primary"></i> Global Audit Log</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>TXN ID</th>
+                    <th>Type</th>
+                    <th>Sender</th>
+                    <th>Recipient</th>
+                    <th>Amount</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-transactions-table">
+                  <tr><td colspan="6" class="text-center">Loading system logs...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- JavaScript Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/transactions.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
